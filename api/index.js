@@ -32,16 +32,16 @@ app.use(express.json());
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
 
-// send back a 404 error for any unknown api request
-app.use((req, res, next) => {
-  next(new ApiError(httpStatus.NOT_FOUND, "Not found"));
-});
-
 app.get(
   "/",
   catchAsync(async (req, res) => {
     res.status(httpStatus["200_MESSAGE"]).send({ message: "Hello World" });
   })
 );
+
+// send back a 404 error for any unknown api request
+app.use((req, res, next) => {
+  next(new ApiError(httpStatus.NOT_FOUND, "Not found"));
+});
 
 module.exports = app;
