@@ -1,11 +1,12 @@
+require("dotenv").config({ debug: process.env.DEBUG });
 const express = require("express");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const rateLimit = require("express-rate-limit");
 const httpStatus = require("http-status");
 const helmet = require("helmet");
-const catchAsync = require("./utils/catchAsync");
 const ApiError = require("./utils/ApiError");
+const { getAllStaff } = require("./controllers/controllers");
 const app = express();
 
 const limiter = rateLimit({
@@ -13,7 +14,12 @@ const limiter = rateLimit({
   max: 100, // limit each IP to 100 requests per windowMs
 });
 
-// default options
+/*
+
+MIDDLEWARES
+
+*/
+
 app.use(
   fileUpload({
     createParentPath: true,
@@ -41,24 +47,27 @@ app.use(express.urlencoded({ extended: true }));
 //  apply to all requests
 app.use(limiter);
 
-app.get(
-  "/",
-  catchAsync(async (req, res) => {
-    res.send({ message: "Hello World" });
-  })
-);
+/*
+
+ROUTES
+
+*/
+
+app.get("/", getAllStaff);
 
 app.use("/favicon.ico", (req, res, next) => {
   res.status(204).end();
 });
 
+/*
+
+FURTHER CONFIG
+
+*/
+
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
   next(new ApiError(httpStatus.NOT_FOUND, "Not found"));
-});
-
-app.listen(3000, () => {
-  console.log(`Example app listening at http://localhost:${3000}`);
 });
 
 module.exports = app;

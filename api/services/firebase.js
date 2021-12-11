@@ -5,6 +5,7 @@ const serviceAccount = JSON.parse(
   Buffer.from(process.env.GOOGLE_CONFIG_BASE64, "base64").toString("ascii")
 );
 
+// initialize firebase admin with credentials
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
