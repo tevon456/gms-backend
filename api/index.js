@@ -6,19 +6,14 @@ const rateLimit = require("express-rate-limit");
 const httpStatus = require("http-status");
 const helmet = require("helmet");
 const ApiError = require("./utils/ApiError");
-const { getAllStaff } = require("./controllers/controllers");
+const { getAllEmployee, createEmployee } = require("./controllers/controllers");
 const app = express();
 
+const PORT = 8000;
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
 });
-
-/*
-
-MIDDLEWARES
-
-*/
 
 app.use(
   fileUpload({
@@ -32,42 +27,32 @@ app.use(
     tempFileDir: "/tmp/",
   })
 );
-
 app.use(cors());
-
-// set security HTTP headers
 app.use(helmet());
-
-// parse json request body
 app.use(express.json());
-
-// parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
-
-//  apply to all requests
 app.use(limiter);
 
-/*
+/* ROUTES */
 
-ROUTES
+app.get("/employee", getAllEmployee);
+app.get("/employee/:employeeId", getAllEmployee);
+app.post("/employee", createEmployee);
+// app.patch("/employee", getAllEmployee);
+// app.delete("/employee", getAllEmployee);
 
-*/
-
-app.get("/", getAllStaff);
+/* FURTHER CONFIG */
 
 app.use("/favicon.ico", (req, res, next) => {
   res.status(204).end();
 });
 
-/*
-
-FURTHER CONFIG
-
-*/
-
-// send back a 404 error for any unknown api request
 app.use((req, res, next) => {
-  next(new ApiError(httpStatus.NOT_FOUND, "Not found"));
+  next(res.status(httpStatus.NOT_FOUND).send({ message: "Not found" }));
+});
+
+app.listen(PORT, () => {
+  console.log(`GMS-API listening at http://localhost:${PORT}`);
 });
 
 module.exports = app;
