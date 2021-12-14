@@ -58,19 +58,27 @@ const createEmployee = catchAsync(async (req, res) => {
         password: newPassword,
       });
     } else {
-      new ApiError(httpStatus[400], httpStatus["validation error"]);
+      res.status(400).send(httpStatus["validation error"]);
     }
   } catch (error) {
     console.log(error);
-    new ApiError(400, error);
+    res.status(400).send({ error });
   }
 });
 
 const getSingleEmployee = catchAsync(async (req, res) => {
   try {
     let id = req.params?.id;
-    let employee = await db.collection("employees").doc(id).get().data();
-    res.status(200).send(employee);
+    let employee = await db.collection("employees").doc(id).get();
+    let employee_uid = employee.data()?.uid;
+    let employee_user = await await auth().getUser(employee_uid);
+    console.log(employee_user);
+    res.status(200).send({
+      ...employee.data(),
+      email: employee_user.email,
+      displayName: employee_user.displayName,
+      disabled: employee_user.disabled,
+    });
   } catch (error) {
     res.status(400).send({ message: "bad request" });
   }

@@ -5,8 +5,11 @@ const fileUpload = require("express-fileupload");
 const rateLimit = require("express-rate-limit");
 const httpStatus = require("http-status");
 const helmet = require("helmet");
-const ApiError = require("./utils/ApiError");
-const { getAllEmployee, createEmployee } = require("./controllers/controllers");
+const {
+  getAllEmployee,
+  createEmployee,
+  getSingleEmployee,
+} = require("./controllers/controllers");
 const app = express();
 
 const PORT = 8000;
@@ -34,12 +37,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(limiter);
 
 /* ROUTES */
+function auth(req, res, next) {
+  console.log(req.headers);
+  next();
+}
 
+app.get("/", auth, function (req, res) {
+  res.send({ message: "gms-api" });
+});
 app.get("/employee", getAllEmployee);
-app.get("/employee/:employeeId", getAllEmployee);
+app.get("/employee/:id", getSingleEmployee);
 app.post("/employee", createEmployee);
-// app.patch("/employee", getAllEmployee);
-// app.delete("/employee", getAllEmployee);
 
 /* FURTHER CONFIG */
 
