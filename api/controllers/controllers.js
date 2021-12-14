@@ -50,15 +50,18 @@ const createEmployee = catchAsync(async (req, res) => {
       const employee = await admin.firestore().collection("employees");
       const new_employee = await employee.add(employee_payload);
 
-      console.log("created employee: ", new_employee.id);
-
       res.status(201).send({
         id: new_employee.id,
         ...employee_payload,
         password: newPassword,
+        displayName: user.displayName,
+        email: user.email,
+        disabled: user.disabled,
       });
     } else {
-      res.status(400).send(httpStatus["validation error"]);
+      schema.validate(req.body).catch((e) => {
+        res.status(400).send({ error: e.errors });
+      });
     }
   } catch (error) {
     console.log(error);
@@ -87,15 +90,28 @@ const getSingleEmployee = catchAsync(async (req, res) => {
 const getAllEmployee = catchAsync(async (req, res) => {
   try {
     const snapshot = await admin.firestore().collection("employees").get();
-    let collection = snapshot.docs.map((doc) => {
-      return { id: doc.id, ...doc.data() };
-    });
+    let collection = await Promise.all(
+      snapshot.docs.map(async (doc) => {
+        let employee_uid = doc.data()?.uid;
+        let employee_user = await auth().getUser(employee_uid);
+        let payload = {
+          id: doc.id,
+          ...doc.data(),
+          email: employee_user.email,
+          displayName: employee_user.displayName,
+          disabled: employee_user.disabled,
+        };
+        return payload;
+      })
+    );
     res.status(200).send(collection);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: error });
   }
 });
+
+const updateEmployee = catchAsync(async (req, res) => {});
 
 module.exports = {
   createEmployee,
