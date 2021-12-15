@@ -42,7 +42,7 @@ app.use(limiter);
 /* ROUTES */
 async function authMiddleware(req, res, next) {
   console.log(req.headers);
-  const decodedToken = await auth.verifyIdToken();
+  // const decodedToken = await auth.verifyIdToken();
   next();
 }
 
