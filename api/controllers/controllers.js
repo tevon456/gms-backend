@@ -86,6 +86,7 @@ const getSingleEmployee = catchAsync(async (req, res) => {
 
     // get employee from db and linked user
     let employee = await db.collection("employees").doc(id).get();
+
     let employee_uid = employee.data()?.uid;
     let employee_user = await auth().getUser(employee_uid);
 
@@ -132,7 +133,6 @@ const updateEmployee = catchAsync(async (req, res) => {
   try {
     // validate data
     let schema = yup.object().shape({
-      id: yup.string().required(),
       first_name: yup.string().required(),
       last_name: yup.string().required(),
       trn: yup.string().required(),
@@ -147,15 +147,11 @@ const updateEmployee = catchAsync(async (req, res) => {
 
     if (isValid) {
       // get employee from db
-      let employee = await db.collection("employees").doc(id);
-
-      //return error if no employee is found
-      if (!employee) {
-        res.status(404).send({ message: "not found" });
-      }
+      let id = req.params?.id;
+      let employee = db.collection("employees").doc(id);
 
       // update employee and user
-      let employee_uid = employee.get().data()?.uid;
+      let employee_uid = (await employee.get()).data()?.uid;
       await admin.auth().updateUser(employee_uid, {
         displayName: `${req.body.first_name} ${req.body.last_name}`,
         disabled: req.body.disabled,
@@ -169,11 +165,28 @@ const updateEmployee = catchAsync(async (req, res) => {
         phone_number: req.body.phone_number,
         updated_at: new Date().toUTCString(),
       });
+      res.status(200).send({ message: "updated" });
     } else {
       schema.validate(req.body).catch((e) => {
         res.status(400).send({ error: e.errors });
       });
     }
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ message: error });
+  }
+});
+
+const deleteEmployee = catchAsync(async (req, res) => {
+  try {
+    let id = req.params?.id;
+    let employee = db.collection("employees").doc(id);
+    let employee_uid = (await employee.get()).data()?.uid;
+
+    await admin.auth().deleteUser(employee_uid);
+    await employee.delete();
+
+    res.status(200).send({ message: "deleted" });
   } catch (error) {
     res.status(400).send({ message: error });
   }
@@ -183,4 +196,6 @@ module.exports = {
   createEmployee,
   getAllEmployee,
   getSingleEmployee,
+  updateEmployee,
+  deleteEmployee,
 };

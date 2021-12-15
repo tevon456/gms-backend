@@ -5,10 +5,13 @@ const fileUpload = require("express-fileupload");
 const rateLimit = require("express-rate-limit");
 const httpStatus = require("http-status");
 const helmet = require("helmet");
+const { auth } = require("./services/firebase");
 const {
   getAllEmployee,
   createEmployee,
   getSingleEmployee,
+  updateEmployee,
+  deleteEmployee,
 } = require("./controllers/controllers");
 const app = express();
 
@@ -37,17 +40,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(limiter);
 
 /* ROUTES */
-function auth(req, res, next) {
+async function authMiddleware(req, res, next) {
   console.log(req.headers);
+  const decodedToken = await auth.verifyIdToken();
   next();
 }
 
-app.get("/", auth, function (req, res) {
-  res.send({ message: "gms-api" });
+app.get("/", authMiddleware, function (req, res) {
+  res.send({ message: `gms-api ${new Date().toLocaleDateString()}` });
 });
 app.get("/employee", getAllEmployee);
 app.get("/employee/:id", getSingleEmployee);
 app.post("/employee", createEmployee);
+app.patch("/employee/:id", updateEmployee);
+app.delete("/employee/:id", deleteEmployee);
 
 /* FURTHER CONFIG */
 
