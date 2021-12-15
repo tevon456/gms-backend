@@ -18,14 +18,18 @@ const createEmployee = catchAsync(async (req, res) => {
       disabled: yup.bool().required(),
       phone_number: yup.string().required(),
     });
+
+    //validate request body
     const isValid = await schema.isValid(req.body);
 
     if (isValid) {
+      //generate a random password
       const newPassword = randomstring.generate({
         length: 9,
         charset: "alphanumeric",
       });
 
+      // create a firebase user with data from request
       const user = await auth().createUser({
         displayName: `${req.body.first_name} ${req.body.last_name}`,
         password: newPassword,
@@ -34,22 +38,28 @@ const createEmployee = catchAsync(async (req, res) => {
         emailVerified: false,
       });
 
+      // copy and modify request body
       const original_payload = { ...req.body };
       delete original_payload.email;
       delete original_payload.first_name;
       delete original_payload.last_name;
       delete original_payload.disabled;
 
+      // create object with employee document data
       const employee_payload = {
         ...original_payload,
         created_at: new Date().toUTCString(),
         updated_at: new Date().toUTCString(),
-        uid: user.uid,
+        uid: user.uid, // for linking back to the firebase user account used for auth
       };
 
-      const employee = await admin.firestore().collection("employees");
-      const new_employee = await employee.add(employee_payload);
+      // create a new employee from object above
+      const employee_collection = await admin
+        .firestore()
+        .collection("employees");
+      const new_employee = await employee_collection.add(employee_payload);
 
+      // return new employee and data from created firebase user
       res.status(201).send({
         id: new_employee.id,
         ...employee_payload,
@@ -71,11 +81,15 @@ const createEmployee = catchAsync(async (req, res) => {
 
 const getSingleEmployee = catchAsync(async (req, res) => {
   try {
+    // get employee id from request param
     let id = req.params?.id;
+
+    // get employee from db and linked user
     let employee = await db.collection("employees").doc(id).get();
     let employee_uid = employee.data()?.uid;
-    let employee_user = await await auth().getUser(employee_uid);
-    console.log(employee_user);
+    let employee_user = await auth().getUser(employee_uid);
+
+    // send the employee to client
     res.status(200).send({
       ...employee.data(),
       email: employee_user.email,
@@ -104,6 +118,9 @@ const getAllEmployee = catchAsync(async (req, res) => {
         return payload;
       })
     );
+    if (collection.length === 0) {
+      res.status(404).send({ message: "No employees found" });
+    }
     res.status(200).send(collection);
   } catch (error) {
     console.log(error);
@@ -111,7 +128,56 @@ const getAllEmployee = catchAsync(async (req, res) => {
   }
 });
 
-const updateEmployee = catchAsync(async (req, res) => {});
+const updateEmployee = catchAsync(async (req, res) => {
+  try {
+    // validate data
+    let schema = yup.object().shape({
+      id: yup.string().required(),
+      first_name: yup.string().required(),
+      last_name: yup.string().required(),
+      trn: yup.string().required(),
+      gender: yup.string().required(),
+      role: yup.mixed().oneOf(["admin", "sales_representative"]),
+      email: yup.string().email(),
+      disabled: yup.bool().required(),
+      phone_number: yup.string().required(),
+    });
+
+    const isValid = await schema.isValid(req.body);
+
+    if (isValid) {
+      // get employee from db
+      let employee = await db.collection("employees").doc(id);
+
+      //return error if no employee is found
+      if (!employee) {
+        res.status(404).send({ message: "not found" });
+      }
+
+      // update employee and user
+      let employee_uid = employee.get().data()?.uid;
+      await admin.auth().updateUser(employee_uid, {
+        displayName: `${req.body.first_name} ${req.body.last_name}`,
+        disabled: req.body.disabled,
+        email: req.body.email,
+      });
+
+      await employee.update({
+        trn: req.body.trn,
+        gender: req.body.gender,
+        role: req.body.gender,
+        phone_number: req.body.phone_number,
+        updated_at: new Date().toUTCString(),
+      });
+    } else {
+      schema.validate(req.body).catch((e) => {
+        res.status(400).send({ error: e.errors });
+      });
+    }
+  } catch (error) {
+    res.status(400).send({ message: error });
+  }
+});
 
 module.exports = {
   createEmployee,
