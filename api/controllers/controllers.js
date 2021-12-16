@@ -161,7 +161,7 @@ const updateEmployee = catchAsync(async (req, res) => {
       await employee.update({
         trn: req.body.trn,
         gender: req.body.gender,
-        role: req.body.gender,
+        role: req.body.role,
         phone_number: req.body.phone_number,
         updated_at: new Date().toUTCString(),
       });
