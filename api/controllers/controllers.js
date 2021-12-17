@@ -1,8 +1,7 @@
-const httpStatus = require("http-status");
-const ApiError = require("../utils/ApiError");
 const catchAsync = require("../utils/catchAsync");
-const { admin, db } = require("../services/firebase");
+const { admin, db, storage } = require("../services/firebase");
 const { auth } = require("firebase-admin");
+const { getStorage, ref, uploadBytes } = require("firebase/storage");
 const randomstring = require("randomstring");
 const yup = require("yup");
 
@@ -192,10 +191,103 @@ const deleteEmployee = catchAsync(async (req, res) => {
   }
 });
 
+// CUSTOMERS
+
+const createCustomer = catchAsync(async (req, res) => {
+  try {
+    let schema = yup.object().shape({
+      first_name: yup.string().required(),
+      last_name: yup.string().required(),
+      email: yup.string().email().required(),
+      dob: yup.date().required(),
+      gender: yup.string().required(),
+      occupation: yup.string().required(),
+      address_line_1: yup.string().required(),
+      address_line_2: yup.string(),
+      town: yup.string().required(),
+      province: yup.string().required(),
+      country: yup.string().required(),
+      identification_type: yup.string().required(),
+      identification_number: yup.string().required(),
+      trn: yup.string().required(),
+      phone_number: yup.string().required(),
+    });
+
+    const valid_avatar_types = [
+      "image/png",
+      "image/jpeg",
+      "image/sgv+xml",
+      "image/gif",
+    ];
+
+    //validate request body
+    const isValid = await schema.isValid(req.body);
+    if (isValid) {
+      //create a new employee from object above
+      const customer_collection = await admin
+        .firestore()
+        .collection("customers");
+      const new_customer = await customer_collection.add(req.body);
+
+      if (req.files?.avatar) {
+        let avatar_temp_path = req.files.avatar.tempFilePath;
+        let bucket = admin.storage().bucket();
+        await bucket.upload(avatar_temp_path, {
+          destination: `avatars/${new_customer.id}`,
+        });
+      }
+
+      //       new_customer.update({
+      //         av
+      // ...(await new_customer.get()).data
+      //       })
+
+      // return new employee and data from created firebase user
+      // res.status(201).send({
+      //   id: new_customer.id,
+      //   ...new_customer,
+      // });
+
+      res.status(201).send({ body: req.body });
+    } else {
+      schema.validate(req.body).catch((e) => {
+        res.status(400).send({ error: e.errors });
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ error });
+  }
+});
+
+const getAllCustomer = catchAsync(async (req, res) => {
+  try {
+    const snapshot = await admin.firestore().collection("customers").get();
+    let collection = await Promise.all(
+      snapshot.docs.map(async (doc) => {
+        let payload = {
+          id: doc.id,
+          ...doc.data(),
+        };
+        return payload;
+      })
+    );
+    if (collection.length === 0) {
+      res.status(404).send({ message: "No customers found" });
+    }
+    res.status(200).send(collection);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: error });
+  }
+});
+
 module.exports = {
   createEmployee,
   getAllEmployee,
   getSingleEmployee,
   updateEmployee,
   deleteEmployee,
+  createCustomer,
+  getAllCustomer,
 };
