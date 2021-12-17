@@ -5,13 +5,17 @@ const fileUpload = require("express-fileupload");
 const rateLimit = require("express-rate-limit");
 const httpStatus = require("http-status");
 const helmet = require("helmet");
-const { auth } = require("./services/firebase");
+// const { auth } = require("./services/firebase");
 const {
   getAllEmployee,
   createEmployee,
   getSingleEmployee,
   updateEmployee,
   deleteEmployee,
+  createCustomer,
+  getAllCustomer,
+  getSingleCustomer,
+  deleteCustomer,
 } = require("./controllers/controllers");
 const app = express();
 
@@ -49,12 +53,18 @@ async function authMiddleware(req, res, next) {
 app.get("/", authMiddleware, function (req, res) {
   res.send({ message: `gms-api ${new Date().toLocaleDateString()}` });
 });
+
 app.get("/employee", getAllEmployee);
-app.get("/employee/:id", getSingleEmployee);
 app.post("/employee", createEmployee);
+app.get("/employee/:id", getSingleEmployee);
 app.patch("/employee/:id", updateEmployee);
 app.delete("/employee/:id", deleteEmployee);
 
+app.post("/customer", createCustomer);
+app.get("/customer", getAllCustomer);
+app.get("/customer/:id", getSingleCustomer);
+app.delete("/customer/:id", deleteCustomer);
+app.patch("/customer/:id", createCustomer);
 /* FURTHER CONFIG */
 
 app.use("/favicon.ico", (req, res, next) => {

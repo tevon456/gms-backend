@@ -224,31 +224,42 @@ const createCustomer = catchAsync(async (req, res) => {
     const isValid = await schema.isValid(req.body);
     if (isValid) {
       //create a new employee from object above
-      const customer_collection = await admin
-        .firestore()
-        .collection("customers");
-      const new_customer = await customer_collection.add(req.body);
+      const customer_collection = admin.firestore().collection("customers");
+      const new_customer = await customer_collection.add({
+        ...req.body,
+        created_at: new Date().toUTCString(),
+        updated_at: new Date().toUTCString(),
+      });
+      let new_customer_data = (await new_customer.get()).data();
+      let new_customer_avatar = null;
 
       if (req.files?.avatar) {
         let avatar_temp_path = req.files.avatar.tempFilePath;
         let bucket = admin.storage().bucket();
-        await bucket.upload(avatar_temp_path, {
+        let [customer_avatar] = await bucket.upload(avatar_temp_path, {
           destination: `avatars/${new_customer.id}`,
+          public: true,
+          metadata: {
+            contentType: req.files.avatar.mimetype,
+          },
         });
+        [new_customer_avatar] = await customer_avatar.getMetadata();
       }
 
-      //       new_customer.update({
-      //         av
-      // ...(await new_customer.get()).data
-      //       })
+      await new_customer.update({
+        ...new_customer_data,
+        avatar: new_customer_avatar.mediaLink,
+        created_at: new Date().toUTCString(),
+        updated_at: new Date().toUTCString(),
+      });
 
-      // return new employee and data from created firebase user
-      // res.status(201).send({
-      //   id: new_customer.id,
-      //   ...new_customer,
-      // });
-
-      res.status(201).send({ body: req.body });
+      res.status(200).send({
+        id: new_customer.id,
+        ...new_customer_data,
+        avatar: new_customer_avatar.mediaLink,
+        created_at: new Date().toUTCString(),
+        updated_at: new Date().toUTCString(),
+      });
     } else {
       schema.validate(req.body).catch((e) => {
         res.status(400).send({ error: e.errors });
@@ -282,6 +293,36 @@ const getAllCustomer = catchAsync(async (req, res) => {
   }
 });
 
+const getSingleCustomer = catchAsync(async (req, res) => {
+  try {
+    // get customer id from request param
+    let id = req.params?.id;
+
+    // get customer from db and linked user
+    let customer = await db.collection("customers").doc(id).get();
+    // send the customer to client
+    res.status(200).send({
+      ...customer.data(),
+      id: customer.id,
+    });
+  } catch (error) {
+    res.status(400).send({ message: "bad request" });
+  }
+});
+
+const deleteCustomer = catchAsync(async (req, res) => {
+  try {
+    let id = req.params?.id;
+    let customer = db.collection("customers").doc(id);
+    await admin.storage().bucket().file(`avatars\${customer.id}`).delete();
+    await customer.delete();
+
+    res.status(200).send({ message: "deleted" });
+  } catch (error) {
+    res.status(400).send({ message: error });
+  }
+});
+
 module.exports = {
   createEmployee,
   getAllEmployee,
@@ -290,4 +331,6 @@ module.exports = {
   deleteEmployee,
   createCustomer,
   getAllCustomer,
+  getSingleCustomer,
+  deleteCustomer,
 };
