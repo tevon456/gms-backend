@@ -1,22 +1,28 @@
-const emailjs = require("emailjs-com");
+const nodemailer = require("nodemailer");
+const {
+  staffAccountCreatedTemplate,
+} = require("../templates/accountCreatedTemplate");
 require("dotenv");
 
-emailjs.init(process.env.EMAIL_JS_USER_ID);
+let transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST,
+  port: process.env.EMAIL_PORT,
+  auth: {
+    user: process.env.EMAIL_AUTH_USER,
+    pass: process.env.EMAIL_AUTH_PASSWORD,
+  },
+});
 
-const staffAccountEmail = ({ from_name, to_name, dashboard_url, password }) => {
-  emailjs
-    .send(
-      process.env.EMAIL_JS_SERVICE_ID,
-      process.env.EMAIL_JS_ACCOUNT_TEMPLATE_ID,
-      {
-        from_name,
-        to_name,
-        dashboard_url,
-        password,
-      }
-    )
-    .then((response) => {
-      console.log(response.status, response.text);
+const staffAccountCreatedEmail = (to_email, template_body) => {
+  transporter
+    .sendMail({
+      to: to_email,
+      from: process.env.EMAIL_FROM_ADDRESS,
+      subject: "Account Created",
+      html: staffAccountCreatedTemplate({ ...template_body }),
+    })
+    .then(() => {
+      console.log(`email sent to ${to_email}`);
     })
     .catch((err) => {
       console.log(err);
@@ -24,5 +30,5 @@ const staffAccountEmail = ({ from_name, to_name, dashboard_url, password }) => {
 };
 
 module.exports = {
-  staffAccountEmail,
+  staffAccountCreatedEmail,
 };
