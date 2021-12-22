@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 const {
   staffAccountCreatedTemplate,
-} = require("../templates/accountCreatedTemplate");
+} = require("../templates/staffAccountCreatedTemplate");
 require("dotenv");
 
 let transporter = nodemailer.createTransport({

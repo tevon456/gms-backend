@@ -1,0 +1,41 @@
+<mjml>
+  <mj-body background-color="#E7E7E7" width="600px">
+    <mj-section
+      full-width="full-width"
+      background-color="#fff"
+      padding-bottom="0"
+    >
+      <mj-column padding-bottom="40px">
+        <mj-text
+          font-size="20px"
+          font-weight="bold"
+          color="#40c057"
+          font-family="helvetica"
+          >Account Created
+        </mj-text>
+        <mj-divider border-color="#191919"></mj-divider>
+        <mj-text font-size="16px" color="#191919" font-family="helvetica"
+          >Hello, ${to_name},<br /><br />
+
+          Your staff account was provisioned for ${dashboard_url}, your password
+          is <b style="color: #40c057">${password}</b>. <br /><br />
+          Best wishes,<br />
+          ${from_name} team
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section full-width="full-width" background-color="#40c057">
+      <mj-column padding-bottom="10px">
+        <mj-text
+          color="#fff"
+          font-size="11px"
+          align="center"
+          line-height="16px"
+        >
+          You are receiving this email because your email was used to create a
+          staff account.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
