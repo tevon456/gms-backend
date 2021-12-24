@@ -11,9 +11,9 @@ const getAuthenticatedUser = catchAsync(async (req, res) => {
       .where("uid", "==", user_decoded?.uid)
       .get();
 
-    let result = employee.docs;
+    let [result] = employee.docs;
 
-    console.log("r=>: ", user_decoded?.uid, result);
+    console.log("r=>: ", user_decoded?.uid, result.data());
 
     const user = {
       name: user_decoded?.name || "",
