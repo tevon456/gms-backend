@@ -1,6 +1,5 @@
 const catchAsync = require("../utils/catchAsync");
-const { admin, db } = require("../services/firebase");
-const { collection, query, where } = require("firebase/firestore");
+const { admin } = require("../services/firebase");
 
 const getAuthenticatedUser = catchAsync(async (req, res) => {
   try {
@@ -12,13 +11,11 @@ const getAuthenticatedUser = catchAsync(async (req, res) => {
       .where("uid", "==", user_decoded?.uid)
       .get();
 
-    console.log(employee);
-
     let result = employee.docs.forEach((doc) => {
       return { id: doc.id, ...doc.data() };
     });
 
-    console.log(result);
+    console.log("r=>: ", user_decoded?.uid, result);
 
     const user = {
       name: user_decoded?.name || "",
