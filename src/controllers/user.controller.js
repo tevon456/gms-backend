@@ -6,13 +6,12 @@ const getAuthenticatedUser = catchAsync(async (req, res) => {
   try {
     const user_token = req.headers?.authorization?.split(" ")[1];
     const user_decoded = await admin.auth().verifyIdToken(user_token);
-    const employee = collection(admin.firestore(), "employees");
+    const employee = await db
+      .collection("employees")
+      .where("uid", "==", user_decoded?.uid)
+      .get();
 
-    let q = query(employee, where("uid", "==", user_decoded?.uid));
-    console.log(2, q);
-    const querySnapshot = await getDocs(q);
-    console.log(3, querySnapshot);
-    let result = querySnapshot.forEach((doc) => {
+    let result = employee.docs.forEach((doc) => {
       return { id: doc.id, ...doc.data() };
     });
 
