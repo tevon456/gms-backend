@@ -8,8 +8,11 @@ const getAuthenticatedUser = catchAsync(async (req, res) => {
     const user_decoded = await admin.auth().verifyIdToken(user_token);
 
     let employee = db.collection("employees");
+    console.log(1, employee);
     const q = query(employee, where("uid", "==", user_decoded?.uid));
+    console.log(2, q);
     const querySnapshot = await getDocs(q);
+    console.log(3, querySnapshot);
     let result = querySnapshot.forEach((doc) => {
       return { id: doc.id, ...doc.data() };
     });
