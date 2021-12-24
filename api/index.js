@@ -7,16 +7,19 @@ const router = require("./routes");
 const { limiterMiddleware, fileMiddleware } = require("./middleware");
 const app = express();
 
-app.use(fileMiddleware);
+// app.use(fileMiddleware);
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(limiterMiddleware);
-app.use(router);
+app.use("/", limiterMiddleware, router);
 
-app.use((req, res, next) => {
-  next(res.status(httpStatus.NOT_FOUND).send({ message: "Not found" }));
+app.use("/favicon.ico", (req, res) => {
+  res.status(204).end();
+});
+
+app.use((req, res) => {
+  res.status(400).send({ message: "not found" });
 });
 
 app.listen(process.env.APP_PORT, () => {
