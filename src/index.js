@@ -1,13 +1,25 @@
 require("dotenv").config({ debug: process.env.DEBUG });
 const express = require("express");
 const cors = require("cors");
+const fileUpload = require("express-fileupload");
 const helmet = require("helmet");
 const router = require("./routes");
 const { limiterMiddleware, fileMiddleware } = require("./middleware");
 const app = express();
 let port = process.env.PORT || 8000;
 
-// app.use(fileMiddleware);
+app.use(
+  fileUpload({
+    createParentPath: true,
+    limits: {
+      fileSize: 2 * 1024 * 1024 * 1024, //2MB max file(s) size
+    },
+    abortOnLimit: true,
+    responseOnLimit: "Maximum file size is 2mb",
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
+  })
+);
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
