@@ -1,9 +1,6 @@
 const catchAsync = require("../utils/catchAsync");
 const { admin, db } = require("../services/firebase");
 const { query, where } = require("firebase/firestore");
-const { auth } = require("firebase-admin");
-const yup = require("yup");
-const { staffAccountCreatedEmail } = require("../services/email");
 
 const getAuthenticatedUser = catchAsync(async (req, res) => {
   try {
@@ -28,7 +25,7 @@ const getAuthenticatedUser = catchAsync(async (req, res) => {
     // send the employee to client
     res.status(200).send(result);
   } catch (error) {
-    res.status(400).send({ message: "bad request" });
+    res.status(400).send({ message: error });
   }
 });
 
