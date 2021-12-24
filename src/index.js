@@ -1,7 +1,6 @@
 require("dotenv").config({ debug: process.env.DEBUG });
 const express = require("express");
 const cors = require("cors");
-const httpStatus = require("http-status");
 const helmet = require("helmet");
 const router = require("./routes");
 const { limiterMiddleware, fileMiddleware } = require("./middleware");
@@ -22,11 +21,10 @@ app.use((req, res) => {
   res.status(400).send({ message: "not found" });
 });
 
-app.listen(process.env.APP_PORT, () => {
+const port = process.env.PORT || 8000;
+const server = app.listen(port, () => {
   console.log(
-    `${process.env.APP_NAME.toUpperCase()}-API listening at http://localhost:${
-      process.env.APP_PORT
-    }`
+    `${process.env.APP_NAME.toUpperCase()}-API listening at http://localhost:${port}`
   );
 });
 
