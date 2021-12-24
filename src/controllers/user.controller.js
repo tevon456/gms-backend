@@ -25,6 +25,7 @@ const getAuthenticatedUser = catchAsync(async (req, res) => {
     // send the employee to client
     res.status(200).send(result);
   } catch (error) {
+    console.log(error);
     res.status(400).send({ message: error });
   }
 });
