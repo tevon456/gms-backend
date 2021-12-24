@@ -14,11 +14,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/", limiterMiddleware, router);
 
-app.use("/favicon.ico", (req, res) => {
+app.use("/favicon.ico", (req, res, next) => {
   res.status(204).end();
 });
 
-app.use((req, res) => {
+app.use((req, res, next) => {
   res.status(400).send({ message: "not found" });
 });
 
