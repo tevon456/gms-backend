@@ -6,7 +6,7 @@ const getAuthenticatedUser = catchAsync(async (req, res) => {
   try {
     const user_token = req.headers?.authorization?.split(" ")[1];
     const user_decoded = await admin.auth().verifyIdToken(user_token);
-    const employee = collection(db, "employees");
+    const employee = collection(admin.firestore.Firestore, "employees");
 
     let q = query(employee, where("uid", "==", user_decoded?.uid));
     console.log(2, q);
