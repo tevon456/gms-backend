@@ -11,6 +11,8 @@ const getAuthenticatedUser = catchAsync(async (req, res) => {
       .where("uid", "==", user_decoded?.uid)
       .get();
 
+    console.log(employee);
+
     let result = employee.docs.forEach((doc) => {
       return { id: doc.id, ...doc.data() };
     });
