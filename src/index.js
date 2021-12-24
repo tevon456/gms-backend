@@ -7,7 +7,7 @@ const { limiterMiddleware, fileMiddleware } = require("./middleware");
 const app = express();
 let port = process.env.PORT || 8000;
 
-app.use(fileMiddleware);
+// app.use(fileMiddleware);
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
