@@ -12,17 +12,14 @@ const getAuthenticatedUser = catchAsync(async (req, res) => {
       .get();
 
     let [result] = employee.docs;
-
-    console.log("r=>: ", user_decoded?.uid, result.data());
-
     const user = {
       name: user_decoded?.name || "",
       email: user_decoded?.email || "",
       uid: user_decoded?.uid,
+      role: result.data()?.role,
     };
 
-    // send the employee to client
-    res.status(200).send(result);
+    res.status(200).send(user);
   } catch (error) {
     console.log(error);
     res.status(400).send({ message: error });
