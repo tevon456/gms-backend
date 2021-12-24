@@ -1,15 +1,16 @@
 const catchAsync = require("../utils/catchAsync");
 const { admin, db } = require("../services/firebase");
-const { query, where } = require("firebase/firestore");
+const { collection, query, where } = require("firebase/firestore");
 
 const getAuthenticatedUser = catchAsync(async (req, res) => {
   try {
     const user_token = req.headers?.authorization?.split(" ")[1];
     const user_decoded = await admin.auth().verifyIdToken(user_token);
 
-    let employee = db.collection("employees");
-    console.log(1, employee);
-    const q = query(employee, where("uid", "==", user_decoded?.uid));
+    const q = query(
+      collection(db, "employees"),
+      where("uid", "==", user_decoded?.uid)
+    );
     console.log(2, q);
     const querySnapshot = await getDocs(q);
     console.log(3, querySnapshot);
