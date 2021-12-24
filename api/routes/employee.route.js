@@ -1,17 +1,17 @@
 const express = require("express");
-const { employeeController } = require("../controllers");
-const { authAdminMiddleware } = require("../middleware");
 const router = express.Router();
+const { authAdminMiddleware, authMiddleware } = require("../middleware");
+const { employeeController } = require("../controllers");
 
 router
   .route("/")
-  .get(authAdminMiddleware, employeeController.getAllEmployee)
-  .post(employeeController.createEmployee);
+  .get(authMiddleware, employeeController.getAllEmployee)
+  .post(authAdminMiddleware, employeeController.createEmployee);
 
 router
   .route("/:id")
-  .get(employeeController.getSingleEmployee)
-  .patch(employeeController.updateEmployee)
-  .delete(employeeController.deleteEmployee);
+  .get(authMiddleware, employeeController.getSingleEmployee)
+  .patch(authAdminMiddleware, employeeController.updateEmployee)
+  .delete(authAdminMiddleware, employeeController.deleteEmployee);
 
 module.exports = router;
