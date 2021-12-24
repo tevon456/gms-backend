@@ -8,7 +8,7 @@ const getAuthenticatedUser = catchAsync(async (req, res) => {
     const user_decoded = await admin.auth().verifyIdToken(user_token);
 
     const q = query(
-      collection(db, "employees"),
+      db.collection("employees"),
       where("uid", "==", user_decoded?.uid)
     );
     console.log(2, q);
