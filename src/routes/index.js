@@ -2,15 +2,15 @@ const express = require("express");
 const router = express.Router();
 const employeeRoute = require("./employee.route");
 const customerRoute = require("./customer.route");
+const userRoute = require("./user.route");
 
 router.get("/", (req, res) => {
-  res
-    .status(200)
-    .send({
-      message: `${process.env.APP_NAME} ${new Date().toLocaleTimeString()}`,
-    });
+  res.status(200).send({
+    message: `${process.env.APP_NAME} ${new Date().toLocaleTimeString()}`,
+  });
 });
 router.use("/employee", employeeRoute);
 router.use("/customer", customerRoute);
+router.use("/user", userRoute);
 
 module.exports = router;
