@@ -4,7 +4,7 @@ const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const helmet = require("helmet");
 const router = require("./routes");
-const { limiterMiddleware, fileMiddleware } = require("./middleware");
+const { limiterMiddleware } = require("./middleware");
 const app = express();
 let port = process.env.PORT || 8000;
 

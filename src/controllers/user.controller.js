@@ -5,6 +5,7 @@ const getAuthenticatedUser = catchAsync(async (req, res) => {
   try {
     const user_token = req.headers?.authorization?.split(" ")[1];
     const user_decoded = await admin.auth().verifyIdToken(user_token);
+    console.log("DECODED: ", user_decoded);
     const employee = await admin
       .firestore()
       .collection("employees")
@@ -12,6 +13,8 @@ const getAuthenticatedUser = catchAsync(async (req, res) => {
       .get();
 
     let [result] = employee.docs;
+
+    console.log(result);
 
     const user = {
       name: user_decoded?.name || "",
@@ -22,7 +25,7 @@ const getAuthenticatedUser = catchAsync(async (req, res) => {
 
     res.status(200).send(user);
   } catch (error) {
-    console.log(error);
+    console.log("USER: ", error);
     res.status(400).send({ message: error });
   }
 });
