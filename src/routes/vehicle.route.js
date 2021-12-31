@@ -3,6 +3,11 @@ const router = express.Router();
 const { authMiddleware } = require("../middleware");
 const { vehicleController } = require("../controllers");
 
-router.route("/").post(authMiddleware, vehicleController.createVehicle);
+router
+  .route("/")
+  .get(authMiddleware, vehicleController.getAllVehicle)
+  .post(authMiddleware, vehicleController.createVehicle);
+
+router.route("/:id").get(authMiddleware, vehicleController.getSingleVehicle);
 
 module.exports = router;

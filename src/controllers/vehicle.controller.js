@@ -49,8 +49,8 @@ const createVehicle = catchAsync(async (req, res) => {
         updated_at: new Date().toUTCString(),
         images: [],
         created_by: {
-          name: user_decoded?.name,
-          email: user_decoded?.email,
+          name: user_decoded?.name || "",
+          email: user_decoded?.email || "",
           uid: user_decoded?.uid,
         },
       };
@@ -75,6 +75,50 @@ const createVehicle = catchAsync(async (req, res) => {
   }
 });
 
+const getSingleVehicle = catchAsync(async (req, res) => {
+  try {
+    // get vehicle id from request param
+    let id = req.params?.id;
+
+    // get vehicle from db and linked
+    let vehicle = await db.collection("vehicles").doc(id).get();
+
+    // send the vehicle to client
+    res.status(200).send({
+      ...vehicle.data(),
+    });
+  } catch (error) {
+    res.status(400).send({ message: "bad request" });
+  }
+});
+
+const getAllVehicle = catchAsync(async (req, res) => {
+  try {
+    const vehicle_collection = await admin
+      .firestore()
+      .collection("vehicles")
+      .get();
+    let collection = await Promise.all(
+      vehicle_collection.docs.map(async (doc) => {
+        let payload = {
+          id: doc.id,
+          ...doc.data(),
+        };
+        return payload;
+      })
+    );
+    if (collection.length === 0) {
+      res.status(404).send({ message: "No vehicles found" });
+    }
+    res.status(200).send(collection);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: error });
+  }
+});
+
 module.exports = {
   createVehicle,
+  getSingleVehicle,
+  getAllVehicle,
 };
