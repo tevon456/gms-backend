@@ -131,7 +131,7 @@ const addImages = catchAsync(async (req, res) => {
 
     if (req.files) {
       // upload the files
-      req.files.forEach((file) => {
+      req.files.forEach(async (file) => {
         let temp_path = file.tempFilePath;
         let file_id = nanoid(12);
 
