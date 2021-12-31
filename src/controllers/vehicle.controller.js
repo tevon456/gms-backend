@@ -130,9 +130,14 @@ const addImages = catchAsync(async (req, res) => {
     let images = vehicle_data?.images;
 
     if (req.files) {
-      console.log(req.files);
+      var files = [];
+      var fileKeys = Object.keys(req.files);
+      fileKeys.forEach(function (key) {
+        files.push(req.files[key]);
+      });
+      console.log(req.files, files);
       // upload the files
-      req.files.forEach(async (file) => {
+      files.forEach(async (file) => {
         let temp_path = file.tempFilePath;
         let file_id = nanoid(12);
 
