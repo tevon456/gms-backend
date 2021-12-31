@@ -125,9 +125,8 @@ const addImages = catchAsync(async (req, res) => {
 
     // get vehicle from db and linked
     let vehicle = db.collection("vehicles").doc(id);
-    let vehicle_data = (await vehicle.get()).data();
     let bucket = admin.storage().bucket();
-    let images = vehicle_data?.images;
+    let images = (await vehicle.get()).data()?.images;
 
     if (req.files) {
       var files = [];
@@ -136,14 +135,13 @@ const addImages = catchAsync(async (req, res) => {
         files.push(req.files[key]);
       });
 
-      console.log(req.files, files);
       // upload the files
       files.forEach(async (file) => {
         let temp_path = file.tempFilePath;
         let file_id = nanoid(12);
 
         let [uploaded_file] = await bucket.upload(temp_path, {
-          destination: `vehicle_images/${vehicle_data.id}/${file_id}`,
+          destination: `vehicle_images/${(await vehicle.get()).id}/${file_id}`,
           public: true,
           metadata: {
             contentType: file.mimetype,
@@ -160,8 +158,11 @@ const addImages = catchAsync(async (req, res) => {
         images.push(image_data);
       });
     }
+
+    console.log(images);
+
     await vehicle.update({
-      ...vehicle_data,
+      ...(await vehicle.get()).data(),
       images,
       created_at: new Date().toUTCString(),
       updated_at: new Date().toUTCString(),
@@ -169,7 +170,7 @@ const addImages = catchAsync(async (req, res) => {
 
     // send the vehicle to client
     res.status(200).send({
-      ...vehicle_data,
+      ...(await vehicle.get()).data(),
       images,
       created_at: new Date().toUTCString(),
       updated_at: new Date().toUTCString(),
