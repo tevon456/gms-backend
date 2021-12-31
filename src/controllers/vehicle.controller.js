@@ -130,6 +130,7 @@ const addImages = catchAsync(async (req, res) => {
     let images = vehicle_data?.images;
 
     if (req.files) {
+      console.log(req.files);
       // upload the files
       req.files.forEach(async (file) => {
         let temp_path = file.tempFilePath;
