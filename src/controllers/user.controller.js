@@ -15,8 +15,10 @@ const getAuthenticatedUser = catchAsync(async (req, res) => {
     let [result] = employee.docs;
 
     const user = {
-      name: user_decoded?.name || "",
-      email: user_decoded?.email || "",
+      name: `${result.data()?.first_name || ""} ${
+        result.data()?.last_name || ""
+      }`,
+      email: result.data()?.email || "",
       uid: user_decoded?.uid,
       role: result.data()?.role,
     };
