@@ -1,6 +1,7 @@
 const catchAsync = require("../utils/catchAsync");
 const { admin, db } = require("../services/firebase");
 const { auth } = require("firebase-admin");
+const { nanoid } = require("nanoid");
 const yup = require("yup");
 
 const createVehicle = catchAsync(async (req, res) => {
@@ -123,13 +124,48 @@ const addImages = catchAsync(async (req, res) => {
     let id = req.params?.id;
 
     // get vehicle from db and linked
-    let vehicle = await db.collection("vehicles").doc(id).get();
+    let vehicle = await db.collection("vehicles").doc(id);
+    let vehicle_data = await (await vehicle.get()).data();
+    let bucket = admin.storage().bucket();
+    let images = vehicle_data?.images;
 
-    console.log(req);
+    if (req.files) {
+      // upload the files
+      req.files.forEach((file) => {
+        let temp_path = file.tempFilePath;
+        let file_id = nanoid(12);
+
+        let [uploaded_file] = await bucket.upload(temp_path, {
+          destination: `vehicle_images/${vehicle_data.id}/${file_id}`,
+          public: true,
+          metadata: {
+            contentType: file.mimetype,
+          },
+        });
+
+        let [uploaded_file] = await uploaded_file.getMetadata();
+
+        let image_data = {
+          src: uploaded_file?.mediaLink,
+          id: file_id,
+        };
+
+        images.push(image_data);
+      });
+    }
+    await vehicle.update({
+      ...vehicle_data,
+      images,
+      created_at: new Date().toUTCString(),
+      updated_at: new Date().toUTCString(),
+    });
 
     // send the vehicle to client
     res.status(200).send({
-      ...vehicle.data(),
+      ...vehicle_data,
+      images,
+      created_at: new Date().toUTCString(),
+      updated_at: new Date().toUTCString(),
     });
   } catch (error) {
     res.status(400).send({ message: "bad request" });
