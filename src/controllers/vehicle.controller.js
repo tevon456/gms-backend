@@ -126,11 +126,11 @@ const addImages = catchAsync(async (req, res) => {
     // get vehicle from db and linked
     let vehicle = db.collection("vehicles").doc(id);
     let bucket = admin.storage().bucket();
-    let images = (await vehicle.get()).data()?.images;
 
     if (req.files) {
-      var files = [];
-      var fileKeys = Object.keys(req.files);
+      var images = (await vehicle.get()).data()?.images;
+      let files = [];
+      let fileKeys = Object.keys(req.files);
       fileKeys.forEach(function (key) {
         files.push(req.files[key]);
       });
