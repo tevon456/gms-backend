@@ -124,8 +124,8 @@ const addImages = catchAsync(async (req, res) => {
     let id = req.params?.id;
 
     // get vehicle from db and linked
-    let vehicle = await db.collection("vehicles").doc(id);
-    let vehicle_data = await (await vehicle.get()).data();
+    let vehicle = db.collection("vehicles").doc(id);
+    let vehicle_data = (await vehicle.get()).data();
     let bucket = admin.storage().bucket();
     let images = vehicle_data?.images;
 
