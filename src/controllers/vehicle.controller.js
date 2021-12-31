@@ -125,7 +125,8 @@ const addImages = catchAsync(async (req, res) => {
     // get vehicle from db and linked
     let vehicle = await db.collection("vehicles").doc(id).get();
 
-    console.log(req.body.images[0]);
+    console.log(req.files);
+    console.log(req.body);
 
     // send the vehicle to client
     res.status(200).send({
