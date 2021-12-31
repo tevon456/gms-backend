@@ -3,6 +3,7 @@ const router = express.Router();
 const employeeRoute = require("./employee.route");
 const customerRoute = require("./customer.route");
 const userRoute = require("./user.route");
+const vehicleRoute = require("./vehicle.route");
 
 router.get("/", (req, res) => {
   res.status(200).send({
@@ -11,6 +12,7 @@ router.get("/", (req, res) => {
 });
 router.use("/employee", employeeRoute);
 router.use("/customer", customerRoute);
+router.use("/vehicle", vehicleRoute);
 router.use("/user", userRoute);
 
 module.exports = router;
