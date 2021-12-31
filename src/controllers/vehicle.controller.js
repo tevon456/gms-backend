@@ -168,6 +168,7 @@ const addImages = catchAsync(async (req, res) => {
       updated_at: new Date().toUTCString(),
     });
   } catch (error) {
+    console.log(error);
     res.status(400).send({ message: "bad request" });
   }
 });
