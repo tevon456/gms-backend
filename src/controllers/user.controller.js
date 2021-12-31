@@ -74,6 +74,7 @@ const updateAuthenticatedUser = catchAsync(async (req, res) => {
       res.status(200).send(user);
     } else {
       schema.validate(req.body).catch((e) => {
+        console.log("USER VALID: ", e);
         res.status(400).send({ message: e.errors });
       });
     }
