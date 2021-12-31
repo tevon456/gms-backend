@@ -10,4 +10,6 @@ router
 
 router.route("/:id").get(authMiddleware, vehicleController.getSingleVehicle);
 
+router.route("/image/:id").post(authMiddleware, vehicleController.addImages);
+
 module.exports = router;

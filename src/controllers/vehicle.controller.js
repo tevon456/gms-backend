@@ -117,8 +117,30 @@ const getAllVehicle = catchAsync(async (req, res) => {
   }
 });
 
+const addImages = catchAsync(async (req, res) => {
+  try {
+    // get vehicle id from request param
+    let id = req.params?.id;
+
+    // get vehicle from db and linked
+    let vehicle = await db.collection("vehicles").doc(id).get();
+
+    if (req.files?.images) {
+      console.log(images);
+    }
+
+    // send the vehicle to client
+    res.status(200).send({
+      ...vehicle.data(),
+    });
+  } catch (error) {
+    res.status(400).send({ message: "bad request" });
+  }
+});
+
 module.exports = {
   createVehicle,
   getSingleVehicle,
   getAllVehicle,
+  addImages,
 };
