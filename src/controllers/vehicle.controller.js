@@ -126,9 +126,9 @@ const addImages = catchAsync(async (req, res) => {
     // get vehicle from db and linked
     let vehicle = db.collection("vehicles").doc(id);
     let bucket = admin.storage().bucket();
+    let images = (await vehicle.get()).data()?.images;
 
     if (req.files) {
-      var images = (await vehicle.get()).data()?.images;
       let files = [];
       let fileKeys = Object.keys(req.files);
       fileKeys.forEach(function (key) {
@@ -136,30 +136,37 @@ const addImages = catchAsync(async (req, res) => {
       });
 
       // upload the files
-      files.forEach(async (file) => {
-        let temp_path = file.tempFilePath;
-        let file_id = nanoid(12);
+      let t = await Promise.all(
+        files.forEach(async (file) => {
+          let temp_path = file.tempFilePath;
+          let file_id = nanoid(12);
 
-        let [uploaded_file] = await bucket.upload(temp_path, {
-          destination: `vehicle_images/${(await vehicle.get()).id}/${file_id}`,
-          public: true,
-          metadata: {
-            contentType: file.mimetype,
-          },
-        });
+          let [uploaded_file] = await bucket.upload(temp_path, {
+            destination: `vehicle_images/${
+              (
+                await vehicle.get()
+              ).id
+            }/${file_id}`,
+            public: true,
+            metadata: {
+              contentType: file.mimetype,
+            },
+          });
 
-        [uploaded_file] = await uploaded_file.getMetadata();
+          [uploaded_file] = await uploaded_file.getMetadata();
 
-        let image_data = {
-          src: uploaded_file?.mediaLink,
-          id: file_id,
-        };
+          let image_data = {
+            src: uploaded_file?.mediaLink,
+            id: file_id,
+          };
 
-        images.push(image_data);
-      });
+          images.push(image_data);
+          return image_data;
+        })
+      );
+
+      console.log(t, images);
     }
-
-    console.log(images);
 
     await vehicle.update({
       ...(await vehicle.get()).data(),
