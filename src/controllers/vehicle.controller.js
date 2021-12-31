@@ -137,7 +137,7 @@ const addImages = catchAsync(async (req, res) => {
 
       // upload the files
       let t = await Promise.all(
-        files.forEach(async (file) => {
+        files.map(async (file) => {
           let temp_path = file.tempFilePath;
           let file_id = nanoid(12);
 
@@ -161,7 +161,6 @@ const addImages = catchAsync(async (req, res) => {
           };
 
           images.push(image_data);
-          return image_data;
         })
       );
 
