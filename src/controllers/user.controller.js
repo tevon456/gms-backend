@@ -1,5 +1,5 @@
 const catchAsync = require("../utils/catchAsync");
-const { admin } = require("../services/firebase");
+const { admin, db } = require("../services/firebase");
 const yup = require("yup");
 
 const getAuthenticatedUser = catchAsync(async (req, res) => {
@@ -30,7 +30,6 @@ const getAuthenticatedUser = catchAsync(async (req, res) => {
 
 const updateAuthenticatedUser = catchAsync(async (req, res) => {
   try {
-    console.log(req.body);
     let schema = yup.object().shape({
       first_name: yup.string().required(),
       last_name: yup.string().required(),
