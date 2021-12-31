@@ -143,7 +143,7 @@ const addImages = catchAsync(async (req, res) => {
           },
         });
 
-        let [uploaded_file] = await uploaded_file.getMetadata();
+        [uploaded_file] = await uploaded_file.getMetadata();
 
         let image_data = {
           src: uploaded_file?.mediaLink,
