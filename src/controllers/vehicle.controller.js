@@ -135,6 +135,7 @@ const addImages = catchAsync(async (req, res) => {
       fileKeys.forEach(function (key) {
         files.push(req.files[key]);
       });
+
       console.log(req.files, files);
       // upload the files
       files.forEach(async (file) => {
