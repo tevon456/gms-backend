@@ -30,6 +30,7 @@ const getAuthenticatedUser = catchAsync(async (req, res) => {
 
 const updateAuthenticatedUser = catchAsync(async (req, res) => {
   try {
+    console.log(req.body);
     let schema = yup.object().shape({
       first_name: yup.string().required(),
       last_name: yup.string().required(),
