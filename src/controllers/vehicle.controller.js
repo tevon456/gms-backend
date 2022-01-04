@@ -296,6 +296,33 @@ const updateVehicle = catchAsync(async (req, res) => {
   }
 });
 
+const deleteVehicle = catchAsync(async (req, res) => {
+  try {
+    // get vehicle id from request param
+    let id = req.params?.id;
+
+    // get vehicle from db and linked
+    let vehicle = db.collection("vehicles").doc(id);
+    let bucket = admin.storage().bucket();
+    let images = (await vehicle.get()).data()?.images;
+
+    // delete images
+    await Promise.all(
+      images.map(async (image) => {
+        await bucket
+          .file(`vehicle_images/${(await vehicle.get()).id}/${image.id}`)
+          .delete();
+      })
+    );
+    await vehicle.delete();
+
+    res.status(200).send({ message: "deleted" });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ message: "bad request" });
+  }
+});
+
 module.exports = {
   createVehicle,
   getSingleVehicle,
@@ -303,4 +330,5 @@ module.exports = {
   addImages,
   deleteImage,
   updateVehicle,
+  deleteVehicle,
 };

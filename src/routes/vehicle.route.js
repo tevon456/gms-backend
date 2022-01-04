@@ -11,7 +11,8 @@ router
 router
   .route("/:id")
   .get(authMiddleware, vehicleController.getSingleVehicle)
-  .patch(authMiddleware, vehicleController.updateVehicle);
+  .patch(authMiddleware, vehicleController.updateVehicle)
+  .delete(authMiddleware, vehicleController.deleteVehicle);
 
 router.route("/image/:id").post(vehicleController.addImages);
 
