@@ -212,8 +212,8 @@ const deleteImage = catchAsync(async (req, res) => {
 
     console.log(images);
     console.log(removed_image);
-    console.log(images.indexOf(removed_image));
-    console.log(images.splice(images.indexOf(removed_image), 1));
+    images.splice(images.indexOf(removed_image), 1);
+    console.log(images);
 
     // await vehicle.update({
     //   ...(await vehicle.get()).data(),
