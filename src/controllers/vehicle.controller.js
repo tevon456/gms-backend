@@ -204,29 +204,25 @@ const deleteImage = catchAsync(async (req, res) => {
     let bucket = admin.storage().bucket();
     let images = (await vehicle.get()).data()?.images;
 
-    // await bucket
-    //   .file(`vehicle_images/${(await vehicle.get()).id}/${id}`)
-    //   .delete();
+    await bucket
+      .file(`vehicle_images/${(await vehicle.get()).id}/${id}`)
+      .delete();
 
-    const removed_image = selectField(images, "id", id)[0];
+    const image_to_delete = selectField(images, "id", id)[0];
 
-    console.log(images);
-    console.log(removed_image);
-    images.splice(images.indexOf(removed_image), 1);
-    console.log(images);
+    // remove image from images
+    images.splice(images.indexOf(image_to_delete), 1);
 
-    // await vehicle.update({
-    //   ...(await vehicle.get()).data(),
-    //   images,
-    //   created_at: new Date().toUTCString(),
-    //   updated_at: new Date().toUTCString(),
-    // });
+    await vehicle.update({
+      ...(await vehicle.get()).data(),
+      images,
+      updated_at: new Date().toUTCString(),
+    });
 
     // send the vehicle to client
     res.status(200).send({
       ...(await vehicle.get()).data(),
       images,
-      created_at: new Date().toUTCString(),
       updated_at: new Date().toUTCString(),
     });
   } catch (error) {
