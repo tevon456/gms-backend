@@ -210,8 +210,10 @@ const deleteImage = catchAsync(async (req, res) => {
 
     const removed_image = selectField(images, "id", id)[0];
 
+    console.log(images);
     console.log(removed_image);
     console.log(images.indexOf(removed_image));
+    console.log(images.splice(images.indexOf(removed_image), 1));
 
     // await vehicle.update({
     //   ...(await vehicle.get()).data(),
