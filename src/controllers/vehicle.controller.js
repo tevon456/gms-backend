@@ -231,10 +231,72 @@ const deleteImage = catchAsync(async (req, res) => {
   }
 });
 
+const updateVehicle = catchAsync(async (req, res) => {
+  try {
+    // validate data
+    let schema = yup.object().shape({
+      manufacturer: yup.string().max(50, "Too Long!").required(),
+      year: yup
+        .number()
+        .min(1900, "Year must be after 1900")
+        .max(3000)
+        .required(),
+      vin: yup.string().required(),
+      price: yup.number().required().min(0),
+      used: yup.bool().required(),
+      interior_color: yup.string(),
+      model: yup.string().required(),
+      fuel_type: yup.string().required(),
+      alarm: yup.bool().required(),
+      seats: yup.number().min(0, "Set a higher value").required(),
+      color: yup.string().required(),
+      gearbox: yup.string().required(),
+      body_type: yup.string().min(3, "Too short").required(),
+      drivetrain: yup.string().required(),
+      engine_size: yup.string().required(),
+      air_conditioning: yup.boolean().required(),
+      air_bag: yup.bool().required(),
+      hand_drive: yup.string().min(4).required(),
+      power_windows: yup.bool().required(),
+      chassis_number: yup.string(),
+      engine_number: yup.string(),
+      additional_notes: yup.string(),
+    });
+
+    const isValid = await schema.isValid(req.body);
+
+    if (isValid) {
+      // get vehicle from db
+      let id = req.params?.id;
+      let vehicle = db.collection("vehicles").doc(id);
+      let images = (await vehicle.get()).data()?.images;
+
+      await vehicle.update({
+        images,
+        ...req.body,
+        updated_at: new Date().toUTCString(),
+      });
+      res.status(200).send({
+        images,
+        ...req.body,
+        updated_at: new Date().toUTCString(),
+      });
+    } else {
+      schema.validate(req.body).catch((e) => {
+        res.status(400).send({ error: e.errors });
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ message: error });
+  }
+});
+
 module.exports = {
   createVehicle,
   getSingleVehicle,
   getAllVehicle,
   addImages,
   deleteImage,
+  updateVehicle,
 };

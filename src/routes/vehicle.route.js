@@ -8,7 +8,10 @@ router
   .get(authMiddleware, vehicleController.getAllVehicle)
   .post(authMiddleware, vehicleController.createVehicle);
 
-router.route("/:id").get(authMiddleware, vehicleController.getSingleVehicle);
+router
+  .route("/:id")
+  .get(authMiddleware, vehicleController.getSingleVehicle)
+  .patch(authMiddleware, vehicleController.updateVehicle);
 
 router.route("/image/:id").post(vehicleController.addImages);
 
