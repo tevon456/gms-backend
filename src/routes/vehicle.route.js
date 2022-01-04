@@ -12,4 +12,6 @@ router.route("/:id").get(authMiddleware, vehicleController.getSingleVehicle);
 
 router.route("/image/:id").post(vehicleController.addImages);
 
+router.route("/image/:id/:vehicle_id").delete(vehicleController.deleteImage);
+
 module.exports = router;
