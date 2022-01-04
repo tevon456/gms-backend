@@ -136,7 +136,7 @@ const addImages = catchAsync(async (req, res) => {
       });
 
       // upload the files
-      let t = await Promise.all(
+      await Promise.all(
         files.map(async (file) => {
           let temp_path = file.tempFilePath;
           let file_id = nanoid(12);
@@ -164,7 +164,7 @@ const addImages = catchAsync(async (req, res) => {
         })
       );
 
-      console.log(t, images);
+      console.log(images);
     }
 
     await vehicle.update({
@@ -187,9 +187,55 @@ const addImages = catchAsync(async (req, res) => {
   }
 });
 
+const deleteImage = catchAsync(async (req, res) => {
+  const selectField = (arr, atr, value) => {
+    return arr.filter((obj) => {
+      return obj[atr] === value;
+    });
+  };
+
+  try {
+    // get vehicle id from request param
+    let id = req.params?.id;
+    let vehicle_id = req.params?.vehicle_id;
+
+    // get vehicle from db and linked
+    let vehicle = db.collection("vehicles").doc(vehicle_id);
+    let bucket = admin.storage().bucket();
+    let images = (await vehicle.get()).data()?.images;
+
+    // await bucket
+    //   .file(`vehicle_images/${(await vehicle.get()).id}/${id}`)
+    //   .delete();
+
+    const removed_image = selectField(images, "id", id);
+
+    console.log(removed_image);
+
+    // await vehicle.update({
+    //   ...(await vehicle.get()).data(),
+    //   images,
+    //   created_at: new Date().toUTCString(),
+    //   updated_at: new Date().toUTCString(),
+    // });
+
+    // send the vehicle to client
+    res.status(200).send({
+      ...(await vehicle.get()).data(),
+      images,
+      created_at: new Date().toUTCString(),
+      updated_at: new Date().toUTCString(),
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ message: "bad request" });
+  }
+});
+
 module.exports = {
   createVehicle,
   getSingleVehicle,
   getAllVehicle,
   addImages,
+  deleteImage,
 };
