@@ -274,11 +274,15 @@ const updateVehicle = catchAsync(async (req, res) => {
       await vehicle.update({
         images,
         ...req.body,
+        created_by: (await vehicle.get()).data()?.created_by,
+        created_at: (await vehicle.get()).data()?.created_at,
         updated_at: new Date().toUTCString(),
       });
       res.status(200).send({
         images,
         ...req.body,
+        created_by: (await vehicle.get()).data()?.created_by,
+        created_at: (await vehicle.get()).data()?.created_at,
         updated_at: new Date().toUTCString(),
       });
     } else {
