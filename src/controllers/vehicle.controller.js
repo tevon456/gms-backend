@@ -208,9 +208,10 @@ const deleteImage = catchAsync(async (req, res) => {
     //   .file(`vehicle_images/${(await vehicle.get()).id}/${id}`)
     //   .delete();
 
-    const removed_image = selectField(images, "id", id);
+    const removed_image = selectField(images, "id", id)[0];
 
     console.log(removed_image);
+    console.log(images.indexOf(removed_image));
 
     // await vehicle.update({
     //   ...(await vehicle.get()).data(),
