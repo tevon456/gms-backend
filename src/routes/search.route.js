@@ -11,4 +11,11 @@ router
   .route("/reservation/:search")
   .get(authMiddleware, searchController.searchReservation);
 
+router
+  .route("/customer/:search")
+  .get(authMiddleware, searchController.searchCustomer);
+
+router
+  .route("/employee/:search")
+  .get(authMiddleware, searchController.searchEmployee);
 module.exports = router;

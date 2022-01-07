@@ -113,7 +113,96 @@ const searchVehicle = catchAsync(async (req, res) => {
   }
 });
 
+const searchCustomer = catchAsync(async (req, res) => {
+  try {
+    const snapshot = await admin.firestore().collection("customers").get();
+    let collection = await Promise.all(
+      snapshot.docs.map(async (doc) => {
+        let payload = {
+          id: doc.id,
+          ...doc.data(),
+        };
+        return payload;
+      })
+    );
+
+    const options = {
+      keys: [
+        "first_name",
+        "last_name",
+        "email",
+        "dob",
+        "year",
+        "phone_number",
+        "trn",
+        "province",
+        "gender",
+        "country",
+        "address_line_1",
+        "address_line_2",
+      ],
+    };
+    const index = Fuse.createIndex(options.keys, collection);
+    const fuse = new Fuse(collection, options, index);
+
+    let response = fuse.search(search);
+
+    if (response) {
+      let results = response.map((result) => {
+        return result?.item;
+      });
+      res.status(200).send(results);
+    } else {
+      res.status(200).send([]);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: error });
+  }
+});
+
+const searchEmployee = catchAsync(async (req, res) => {
+  try {
+    const snapshot = await admin.firestore().collection("employees").get();
+    let collection = await Promise.all(
+      snapshot.docs.map(async (doc) => {
+        let employee_uid = doc.data()?.uid;
+        let employee_user = await auth().getUser(employee_uid);
+        let payload = {
+          id: doc.id,
+          ...doc.data(),
+          email: employee_user.email,
+          displayName: employee_user.displayName,
+          disabled: employee_user.disabled,
+        };
+        return payload;
+      })
+    );
+    const options = {
+      keys: ["displayName", "email", "phone_number", "role", "trn", "gender"],
+    };
+    const index = Fuse.createIndex(options.keys, collection);
+    const fuse = new Fuse(collection, options, index);
+
+    let response = fuse.search(search);
+
+    if (response) {
+      let results = response.map((result) => {
+        return result?.item;
+      });
+      res.status(200).send(results);
+    } else {
+      res.status(200).send([]);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: error });
+  }
+});
+
 module.exports = {
   searchReservation,
   searchVehicle,
+  searchCustomer,
+  searchEmployee,
 };
