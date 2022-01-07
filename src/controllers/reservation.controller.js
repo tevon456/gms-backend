@@ -205,13 +205,13 @@ const getVehicleReservation = catchAsync(async (req, res) => {
           .collection("employees")
           .where("uid", "==", doc.data()?.employee_id)
           .get();
-
+        console.log("=>", employee);
         let payload = {
           id: doc.id,
           ...doc.data(),
           vehicle: { ...vehicle.data() },
           customer: { ...customer.data() },
-          employee: { ...[employee].data() },
+          employee: { ...employee.data() },
         };
         return payload;
       })
