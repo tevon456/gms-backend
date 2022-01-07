@@ -294,9 +294,10 @@ const updateReservation = catchAsync(async (req, res) => {
       // get reservation from db
       let id = req.params?.id;
       let reservation = db.collection("reservations").doc(id);
-      let vehicle = db
-        .collection("vehicles")
-        .doc((await reservation.get()).data?.vehicle_id);
+      let vehicle_id = (await reservation.get()).data?.vehicle_id;
+
+      console.log(vehicle_id);
+      let vehicle = db.collection("vehicles").doc(vehicle_id);
 
       let payload = { ...req.body };
       delete payload.vehicle_id;
