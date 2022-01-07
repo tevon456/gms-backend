@@ -145,6 +145,8 @@ const getEmployeeReservation = catchAsync(async (req, res) => {
       .where("employee_id", "==", id)
       .get();
 
+    console.log(reservation.docs, id);
+
     let collection = await Promise.all(
       reservation.docs.map(async (doc) => {
         let vehicle = await db
