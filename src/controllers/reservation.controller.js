@@ -200,7 +200,7 @@ const getVehicleReservation = catchAsync(async (req, res) => {
           .collection("customers")
           .doc(doc.data()?.customer_id)
           .get();
-        const [employee] = await admin
+        const employee = await admin
           .firestore()
           .collection("employees")
           .where("uid", "==", doc.data()?.employee_id)
@@ -211,7 +211,7 @@ const getVehicleReservation = catchAsync(async (req, res) => {
           ...doc.data(),
           vehicle: { ...vehicle.data() },
           customer: { ...customer.data() },
-          employee: { ...employee.data() },
+          employee: { ...[employee].data() },
         };
         return payload;
       })
