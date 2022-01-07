@@ -5,6 +5,7 @@ const customerRoute = require("./customer.route");
 const userRoute = require("./user.route");
 const vehicleRoute = require("./vehicle.route");
 const reservationRoute = require("./reservation.route");
+const searchRoute = require("./search.route");
 
 router.get("/", (req, res) => {
   res.status(200).send({
@@ -15,6 +16,7 @@ router.use("/employee", employeeRoute);
 router.use("/customer", customerRoute);
 router.use("/vehicle", vehicleRoute);
 router.use("/user", userRoute);
+router.use("/search", searchRoute);
 router.use("/reservation", reservationRoute);
 
 module.exports = router;
