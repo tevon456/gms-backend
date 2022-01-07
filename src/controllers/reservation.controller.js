@@ -108,18 +108,19 @@ const getCustomerReservation = catchAsync(async (req, res) => {
           .collection("customers")
           .doc(doc.data()?.customer_id)
           .get();
-        const [employee] = await admin
+        let employee = await admin
           .firestore()
           .collection("employees")
           .where("uid", "==", doc.data()?.employee_id)
           .get();
+        let [employee_result] = employee.docs;
 
         let payload = {
           id: doc.id,
           ...doc.data(),
           vehicle: { ...vehicle.data() },
           customer: { ...customer.data() },
-          employee: { ...employee.data() },
+          employee: { ...employee_result.data(), id: employee_result.id },
         };
         return payload;
       })
@@ -154,18 +155,19 @@ const getEmployeeReservation = catchAsync(async (req, res) => {
           .collection("customers")
           .doc(doc.data()?.customer_id)
           .get();
-        const [employee] = await admin
+        let employee = await admin
           .firestore()
           .collection("employees")
           .where("uid", "==", doc.data()?.employee_id)
           .get();
+        let [employee_result] = employee.docs;
 
         let payload = {
           id: doc.id,
           ...doc.data(),
           vehicle: { ...vehicle.data() },
           customer: { ...customer.data() },
-          employee: { ...employee.data() },
+          employee: { ...employee_result.data(), id: employee_result.id },
         };
         return payload;
       })
@@ -212,7 +214,7 @@ const getVehicleReservation = catchAsync(async (req, res) => {
           ...doc.data(),
           vehicle: { ...vehicle.data() },
           customer: { ...customer.data() },
-          employee: { ...employee_result.data() },
+          employee: { ...employee_result.data(), id: employee_result.id },
         };
         return payload;
       })
@@ -239,18 +241,19 @@ const getAllReservation = catchAsync(async (req, res) => {
           .collection("customers")
           .doc(doc.data()?.customer_id)
           .get();
-        const [employee] = await admin
+        let employee = await admin
           .firestore()
           .collection("employees")
           .where("uid", "==", doc.data()?.employee_id)
           .get();
+        let [employee_result] = employee.docs;
 
         let payload = {
           id: doc.id,
           ...doc.data(),
           vehicle: { ...vehicle.data() },
           customer: { ...customer.data() },
-          employee: { ...employee.data() },
+          employee: { ...employee_result.data(), id: employee_result.id },
         };
         return payload;
       })
