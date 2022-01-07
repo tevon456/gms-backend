@@ -99,9 +99,26 @@ const getCustomerReservation = catchAsync(async (req, res) => {
 
     let collection = await Promise.all(
       reservation.docs.map(async (doc) => {
+        let vehicle = await db
+          .collection("vehicles")
+          .doc(doc.data()?.vehicle_id)
+          .get();
+        let customer = await db
+          .collection("customers")
+          .doc(doc.data()?.customer_id)
+          .get();
+        const [employee] = await admin
+          .firestore()
+          .collection("employees")
+          .where("uid", "==", employee_id)
+          .get();
+
         let payload = {
           id: doc.id,
           ...doc.data(),
+          vehicle: { ...vehicle.data() },
+          customer: { ...customer.data() },
+          employee: { ...employee.data() },
         };
         return payload;
       })
@@ -127,9 +144,26 @@ const getEmployeeReservation = catchAsync(async (req, res) => {
 
     let collection = await Promise.all(
       reservation.docs.map(async (doc) => {
+        let vehicle = await db
+          .collection("vehicles")
+          .doc(doc.data()?.vehicle_id)
+          .get();
+        let customer = await db
+          .collection("customers")
+          .doc(doc.data()?.customer_id)
+          .get();
+        const [employee] = await admin
+          .firestore()
+          .collection("employees")
+          .where("uid", "==", employee_id)
+          .get();
+
         let payload = {
           id: doc.id,
           ...doc.data(),
+          vehicle: { ...vehicle.data() },
+          customer: { ...customer.data() },
+          employee: { ...employee.data() },
         };
         return payload;
       })
@@ -155,9 +189,26 @@ const getVehicleReservation = catchAsync(async (req, res) => {
 
     let collection = await Promise.all(
       reservation.docs.map(async (doc) => {
+        let vehicle = await db
+          .collection("vehicles")
+          .doc(doc.data()?.vehicle_id)
+          .get();
+        let customer = await db
+          .collection("customers")
+          .doc(doc.data()?.customer_id)
+          .get();
+        const [employee] = await admin
+          .firestore()
+          .collection("employees")
+          .where("uid", "==", employee_id)
+          .get();
+
         let payload = {
           id: doc.id,
           ...doc.data(),
+          vehicle: { ...vehicle.data() },
+          customer: { ...customer.data() },
+          employee: { ...employee.data() },
         };
         return payload;
       })
@@ -175,9 +226,26 @@ const getAllReservation = catchAsync(async (req, res) => {
     const snapshot = await admin.firestore().collection("reservations").get();
     let collection = await Promise.all(
       snapshot.docs.map(async (doc) => {
+        let vehicle = await db
+          .collection("vehicles")
+          .doc(doc.data()?.vehicle_id)
+          .get();
+        let customer = await db
+          .collection("customers")
+          .doc(doc.data()?.customer_id)
+          .get();
+        const [employee] = await admin
+          .firestore()
+          .collection("employees")
+          .where("uid", "==", employee_id)
+          .get();
+
         let payload = {
           id: doc.id,
           ...doc.data(),
+          vehicle: { ...vehicle.data() },
+          customer: { ...customer.data() },
+          employee: { ...employee.data() },
         };
         return payload;
       })
