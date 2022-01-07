@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { authMiddleware, authAdminMiddleware } = require("../middleware");
+const { authMiddleware } = require("../middleware");
 const { reservationController } = require("../controllers");
 
 router
   .route("/")
-  .get(authAdminMiddleware, reservationController.getAllReservation)
+  .get(authMiddleware, reservationController.getAllReservation)
   .post(authMiddleware, reservationController.createReservation);
 
 router
