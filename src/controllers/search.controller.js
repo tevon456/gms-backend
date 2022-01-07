@@ -72,13 +72,13 @@ const searchVehicle = catchAsync(async (req, res) => {
 
     let response = fuse.search(search);
 
-    if (response.length > 1) {
-      let result = response.map((result) => {
+    if (response) {
+      let results = response.map((result) => {
         return result?.item;
       });
-      res.status(200).send(result);
+      res.status(200).send(results);
     } else {
-      res.status(200).send(response);
+      res.status(200).send([]);
     }
   } catch (error) {
     console.log(error);
