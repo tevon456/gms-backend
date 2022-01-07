@@ -78,7 +78,7 @@ const searchVehicle = catchAsync(async (req, res) => {
       });
       res.status(200).send(result);
     } else {
-      res.status(200).send(result);
+      res.status(200).send(response);
     }
   } catch (error) {
     console.log(error);
