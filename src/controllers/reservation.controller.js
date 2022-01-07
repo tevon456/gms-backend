@@ -296,7 +296,6 @@ const updateReservation = catchAsync(async (req, res) => {
       let reservation = db.collection("reservations").doc(id);
       let vehicle_id = (await reservation.get()).data()?.vehicle_id;
 
-      console.log(vehicle_id);
       let vehicle = db.collection("vehicles").doc(vehicle_id);
 
       let payload = { ...req.body };
@@ -304,13 +303,13 @@ const updateReservation = catchAsync(async (req, res) => {
 
       await reservation.update({
         ...req.body,
-        vehicle_id: (await reservation.get()).data?.vehicle_id,
+        vehicle_id: (await reservation.get()).data()?.vehicle_id,
         updated_at: new Date().toUTCString(),
       });
 
       if (req.body.status === "cancelled") {
         vehicle.update({
-          ...(await vehicle.get()).data,
+          ...(await vehicle.get()).data(),
           reserved: false,
         });
       }
@@ -333,10 +332,10 @@ const deleteReservation = catchAsync(async (req, res) => {
     let reservation = db.collection("reservations").doc(id);
     let vehicle = db
       .collection("vehicles")
-      .doc((await reservation.get()).data?.vehicle_id);
+      .doc((await reservation.get()).data()?.vehicle_id);
 
     vehicle.update({
-      ...(await vehicle.get()).data,
+      ...(await vehicle.get()).data(),
       reserved: false,
     });
 
