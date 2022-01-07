@@ -34,13 +34,40 @@ const searchReservation = catchAsync(async (req, res) => {
         return payload;
       })
     );
+    const options = {
+      keys: [
+        "employee.first_name",
+        "employee.last_name",
+        "employee.email",
+        "customer.first_name",
+        "customer.last_name",
+        "customer.email",
+        "amount_deposited",
+        "status",
+        "payment_method",
+        "created_at",
+        "updated_at",
+        "vehicle.manufacturer",
+        "vehicle.model",
+        "vehicle.price",
+        "vehicle.color",
+        "vehicle.year",
+        "vehicle.body_type",
+      ],
+    };
+    const index = Fuse.createIndex(options.keys, collection);
+    const fuse = new Fuse(collection, options, index);
 
-    const options = { keys: ["title", "author.firstName"] };
+    let response = fuse.search(search);
 
-    const myIndex = Fuse.createIndex(options.keys, books);
-    const fuse = new Fuse(books, options, myIndex);
-
-    res.status(200).send(collection);
+    if (response) {
+      let results = response.map((result) => {
+        return result?.item;
+      });
+      res.status(200).send(results);
+    } else {
+      res.status(200).send([]);
+    }
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: error });

@@ -7,4 +7,8 @@ router
   .route("/vehicle/:search")
   .get(authMiddleware, searchController.searchVehicle);
 
+router
+  .route("/reservation/:search")
+  .get(authMiddleware, searchController.searchReservation);
+
 module.exports = router;
