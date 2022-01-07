@@ -111,7 +111,7 @@ const getCustomerReservation = catchAsync(async (req, res) => {
         const [employee] = await admin
           .firestore()
           .collection("employees")
-          .where("uid", "==", employee_id)
+          .where("uid", "==", doc.data()?.employee_id)
           .get();
 
         let payload = {
@@ -157,7 +157,7 @@ const getEmployeeReservation = catchAsync(async (req, res) => {
         const [employee] = await admin
           .firestore()
           .collection("employees")
-          .where("uid", "==", employee_id)
+          .where("uid", "==", doc.data()?.employee_id)
           .get();
 
         let payload = {
@@ -203,7 +203,7 @@ const getVehicleReservation = catchAsync(async (req, res) => {
         const [employee] = await admin
           .firestore()
           .collection("employees")
-          .where("uid", "==", employee_id)
+          .where("uid", "==", doc.data()?.employee_id)
           .get();
 
         let payload = {
@@ -241,7 +241,7 @@ const getAllReservation = catchAsync(async (req, res) => {
         const [employee] = await admin
           .firestore()
           .collection("employees")
-          .where("uid", "==", employee_id)
+          .where("uid", "==", doc.data()?.employee_id)
           .get();
 
         let payload = {
