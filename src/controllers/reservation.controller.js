@@ -82,6 +82,7 @@ const getSingleReservation = catchAsync(async (req, res) => {
       id: reservation.id,
     });
   } catch (error) {
+    console.log(error);
     res.status(400).send({ message: "bad request" });
   }
 });
@@ -127,6 +128,7 @@ const getCustomerReservation = catchAsync(async (req, res) => {
     // send the reservation to client
     res.status(200).send(collection);
   } catch (error) {
+    console.log(error);
     res.status(400).send({ message: "bad request" });
   }
 });
@@ -172,6 +174,7 @@ const getEmployeeReservation = catchAsync(async (req, res) => {
     // send the reservation to client
     res.status(200).send(collection);
   } catch (error) {
+    console.log(error);
     res.status(400).send({ message: "bad request" });
   }
 });
@@ -217,6 +220,7 @@ const getVehicleReservation = catchAsync(async (req, res) => {
     // send the reservation to client
     res.status(200).send(collection);
   } catch (error) {
+    console.log(error);
     res.status(400).send({ message: "bad request" });
   }
 });
@@ -335,6 +339,7 @@ const deleteReservation = catchAsync(async (req, res) => {
 
     res.status(200).send({ message: "deleted" });
   } catch (error) {
+    console.log(error);
     res.status(400).send({ message: error });
   }
 });
