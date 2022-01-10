@@ -115,6 +115,7 @@ const searchVehicle = catchAsync(async (req, res) => {
 
 const searchCustomer = catchAsync(async (req, res) => {
   try {
+    const search = req.params?.search;
     const snapshot = await admin.firestore().collection("customers").get();
     let collection = await Promise.all(
       snapshot.docs.map(async (doc) => {
@@ -163,6 +164,7 @@ const searchCustomer = catchAsync(async (req, res) => {
 
 const searchEmployee = catchAsync(async (req, res) => {
   try {
+    const search = req.params?.search;
     const snapshot = await admin.firestore().collection("employees").get();
     let collection = await Promise.all(
       snapshot.docs.map(async (doc) => {
