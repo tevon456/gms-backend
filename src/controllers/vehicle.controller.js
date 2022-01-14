@@ -13,7 +13,6 @@ const createVehicle = catchAsync(async (req, res) => {
         .min(1900, "Year must be after 1900")
         .max(3000)
         .required(),
-      vin: yup.string().required(),
       price: yup.number().required().min(0),
       used: yup.bool().required(),
       interior_color: yup.string(),
@@ -241,7 +240,6 @@ const updateVehicle = catchAsync(async (req, res) => {
         .min(1900, "Year must be after 1900")
         .max(3000)
         .required(),
-      vin: yup.string().required(),
       price: yup.number().required().min(0),
       used: yup.bool().required(),
       interior_color: yup.string(),
