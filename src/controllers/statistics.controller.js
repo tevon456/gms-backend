@@ -17,6 +17,7 @@ const createStatistics = async () => {
       total_reservations: reservations.docs.length,
       total_customers: customers.docs.length,
       last_updated: new Date().toUTCString(),
+      next_update: dateFNS.addHours(new Date().toUTCString(), 4),
     };
 
     return await snapshot.add(payload);
@@ -40,6 +41,7 @@ const refreshStatistics = async (id) => {
       total_reservations: reservations.docs.length,
       total_customers: customers.docs.length,
       last_updated: new Date().toUTCString(),
+      next_update: dateFNS.addHours(new Date().toUTCString(), 4),
     };
 
     await snapshot.update(payload);
