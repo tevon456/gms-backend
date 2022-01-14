@@ -7,6 +7,7 @@ const noteRoute = require("./note.route");
 const vehicleRoute = require("./vehicle.route");
 const reservationRoute = require("./reservation.route");
 const searchRoute = require("./search.route");
+const statisticsRoute = require("./statistics.route");
 
 router.get("/", (req, res) => {
   res.status(200).send({
@@ -21,5 +22,6 @@ router.use("/user", userRoute);
 router.use("/note", noteRoute);
 router.use("/search", searchRoute);
 router.use("/reservation", reservationRoute);
+router.use("/statistics", statisticsRoute);
 
 module.exports = router;
