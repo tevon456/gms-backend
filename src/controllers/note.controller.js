@@ -41,7 +41,7 @@ const createNote = catchAsync(async (req, res) => {
 
 const getAllCustomerNotes = catchAsync(async (req, res) => {
   try {
-    let id = req.params.id;
+    let id = req.params.customer_id;
 
     const snapshot = await admin
       .firestore()

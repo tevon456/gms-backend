@@ -3,10 +3,11 @@ const router = express.Router();
 const { authMiddleware } = require("../middleware");
 const { noteController } = require("../controllers");
 
+router.route("/").post(authMiddleware, noteController.createNote);
+
 router
-  .route("/")
-  .get(authMiddleware, noteController.getAllCustomerNotes)
-  .post(authMiddleware, noteController.createNote);
+  .route("/:customer_id")
+  .get(authMiddleware, noteController.getAllCustomerNotes);
 
 router
   .route("/:id")
