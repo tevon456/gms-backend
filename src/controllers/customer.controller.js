@@ -118,6 +118,17 @@ const deleteCustomer = catchAsync(async (req, res) => {
   try {
     let id = req.params?.id;
     let customer = db.collection("customers").doc(id);
+    let reservations = await db
+      .collection("reservations")
+      .where("customer_id", "==", id)
+      .get();
+
+    await Promise.all(
+      reservations.docs.map(async (reservation) => {
+        await reservation.delete();
+      })
+    );
+
     admin
       .storage()
       .bucket()
@@ -126,6 +137,7 @@ const deleteCustomer = catchAsync(async (req, res) => {
       .catch((e) => {
         console.log(e);
       });
+
     await customer.delete();
 
     res.status(200).send({ message: "deleted" });
