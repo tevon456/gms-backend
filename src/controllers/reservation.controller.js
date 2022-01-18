@@ -314,6 +314,11 @@ const updateReservation = catchAsync(async (req, res) => {
           ...(await vehicle.get()).data(),
           reserved: false,
         });
+      } else if (req.body.status === "ongoing") {
+        vehicle.update({
+          ...(await vehicle.get()).data(),
+          reserved: true,
+        });
       }
 
       res.status(200).send({ message: "updated" });
