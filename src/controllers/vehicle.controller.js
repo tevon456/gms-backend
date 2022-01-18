@@ -303,6 +303,10 @@ const deleteVehicle = catchAsync(async (req, res) => {
     let vehicle = db.collection("vehicles").doc(id);
     let bucket = admin.storage().bucket();
     let images = (await vehicle.get()).data()?.images;
+    let reservations = await db
+      .collection("reservations")
+      .where("vehicle_id", "==", id)
+      .get();
 
     // delete images
     await Promise.all(
@@ -312,6 +316,13 @@ const deleteVehicle = catchAsync(async (req, res) => {
           .delete();
       })
     );
+
+    await Promise.all(
+      reservations.docs.map(async (reservation) => {
+        await reservation.delete();
+      })
+    );
+
     await vehicle.delete();
 
     res.status(200).send({ message: "deleted" });
