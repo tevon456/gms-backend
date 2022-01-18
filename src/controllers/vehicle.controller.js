@@ -319,7 +319,7 @@ const deleteVehicle = catchAsync(async (req, res) => {
 
     await Promise.all(
       reservations.docs.map(async (reservation) => {
-        db.collection("reservation").doc(reservation.id);
+        await db.collection("reservation").doc(reservation.id).delete();
       })
     );
 

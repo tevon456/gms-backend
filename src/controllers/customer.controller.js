@@ -125,7 +125,14 @@ const deleteCustomer = catchAsync(async (req, res) => {
 
     await Promise.all(
       reservations.docs.map(async (reservation) => {
-        db.collection("reservation").doc(reservation.id);
+        // since we are deleting the reservations we want to set the vehicles status of reserved to false
+        let vehicle_id = (await reservation.get()).data()?.vehicle_id;
+        let vehicle = db.collection("vehicles").doc(vehicle_id);
+        vehicle.update({
+          ...(await vehicle.get()).data(),
+          reserved: false,
+        });
+        await db.collection("reservation").doc(reservation.id).delete();
       })
     );
 
