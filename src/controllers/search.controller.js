@@ -92,7 +92,15 @@ const searchVehicle = catchAsync(async (req, res) => {
     );
 
     const options = {
-      keys: ["manufacturer", "model", "price", "color", "year", "body_type"],
+      keys: [
+        "manufacturer",
+        "model",
+        "price",
+        "color",
+        "year",
+        "body_type",
+        "chassis_number",
+      ],
     };
     const index = Fuse.createIndex(options.keys, collection);
     const fuse = new Fuse(collection, options, index);
