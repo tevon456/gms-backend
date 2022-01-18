@@ -142,6 +142,7 @@ const deleteCustomer = catchAsync(async (req, res) => {
 
     res.status(200).send({ message: "deleted" });
   } catch (error) {
+    console.log(error);
     res.status(400).send({ message: error });
   }
 });
