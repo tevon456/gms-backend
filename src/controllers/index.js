@@ -6,3 +6,4 @@ module.exports.noteController = require("./note.controller");
 module.exports.vehicleController = require("./vehicle.controller");
 module.exports.reservationController = require("./reservation.controller");
 module.exports.statisticsController = require("./statistics.controller");
+module.exports.logController = require("./log.controller");
