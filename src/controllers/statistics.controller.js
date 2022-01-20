@@ -74,7 +74,10 @@ const getStatistics = catchAsync(async (req, res) => {
     } else if (
       // expired by 4 hours refresh stats
       dateFNS.isPast(
-        dateFNS.addHours(Date.parse(collection[0]?.last_updated), 4)
+        dateFNS.addHours(
+          dateFNS.fromUnixTime(Date.parse(collection[0]?.last_updated)),
+          4
+        )
       )
     ) {
       res.status(200).send(await refreshStatistics(collection[0]?.id));
