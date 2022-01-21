@@ -24,8 +24,8 @@ const createLog = catchAsync(async (req, res) => {
         .collection("employees")
         .where("uid", "==", req.body.employee_id)
         .get();
-      console.log(employee);
-      let [employee_result] = employee.docs[0];
+      console.log(employee.docs);
+      let [employee_result] = employee.docs;
 
       console.log(employee_result);
       const new_log = await log_collection.add({
