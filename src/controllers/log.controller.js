@@ -65,6 +65,7 @@ const getAllLogs = catchAsync(async (req, res) => {
         return payload;
       })
     );
+    console.log(collection);
     res.status(200).send(collection);
   } catch (error) {
     console.log("LOG ERROR: ", error);
