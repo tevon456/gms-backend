@@ -26,7 +26,7 @@ const createLog = catchAsync(async (req, res) => {
         .get();
       let [employee_result] = employee.docs;
 
-      console.log("> ", employee_result);
+      console.log("> ", [employee_result]?.data());
 
       const new_log = await log_collection.add({
         ...req.body,
