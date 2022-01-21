@@ -19,12 +19,12 @@ const createLog = catchAsync(async (req, res) => {
     if (isValid) {
       // create a new log from object above
       const log_collection = admin.firestore().collection("logs");
-      const [employee] = await admin
+      const employee = await admin
         .firestore()
         .collection("employees")
         .where("uid", "==", req.body.employee_id)
         .get();
-      let [employee_result] = employee.docs;
+      let [employee_result] = [employee].docs;
 
       const new_log = await log_collection.add({
         ...req.body,
