@@ -1,5 +1,6 @@
 const catchAsync = require("../utils/catchAsync");
-const { admin, auth } = require("../services/firebase");
+const { admin } = require("../services/firebase");
+const { auth } = require("firebase-admin");
 const yup = require("yup");
 
 const createLog = catchAsync(async (req, res) => {
